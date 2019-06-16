@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <data>
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+
+        <variable
+            name="movie"
+            type="com.salesforce.remotetest.data.Movie" />
+
+        <variable
+            name="listener"
+            type="com.salesforce.remotetest.searchmoviestask.SearchMovieUserActionsListener" />
+
+        <variable
+                name="favoriteViewmodel"
+                type="com.salesforce.remotetest.favorites.FavoriteMoviesViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/tab_padding_bottom"
+        android:paddingTop="@dimen/tab_padding_bottom"
+        android:onClick="@{() -> listener.onMovieClicked(movie)}">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:text="@{movie.title}"
+            android:layout_marginLeft="@dimen/tab_padding_bottom"
+            android:layout_marginRight="@dimen/tab_padding_bottom"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:id="@+id/fav_poster_image"
+                   android:layout_below="@id/title"
+                   android:layout_marginLeft="@dimen/tab_padding_bottom"
+                   android:layout_marginRight="@dimen/tab_padding_bottom"
+                   android:layout_marginTop="@dimen/activity_vertical_margin"
+                   android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+    </RelativeLayout>
+</layout>

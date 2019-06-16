@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Movie Search</string>
+    <string name="navigation_view_header_title">Movie Search</string>
+    <string name="search_movies_title">Search Movies</string>
+    <string name="favorite_movies_title">Favorite Movies</string>
+    <string name="no_search_movies">No movies found.</string>
+    <string name="successfully_favorited_message">Favorite Success</string>
+    <string name="successfully_loaded_message">Load Success</string>
+    <string name="successfully_deleted_message">Delete Success</string>
+</resources>

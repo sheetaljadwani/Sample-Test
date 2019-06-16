@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+        <import type="androidx.core.content.ContextCompat" />
+        <variable
+                name="viewmodel"
+                type="com.salesforce.remotetest.favorites.FavoriteMoviesViewModel" />
+
+    </data>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:onRefreshListener="@{viewmodel::onRefresh}"
+            app:refreshing="@{viewmodel.dataLoading}">
+
+        <LinearLayout
+                android:id="@+id/moviesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:orientation="vertical">
+            <LinearLayout
+                    android:id="@+id/movies_linear_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fav_movies_list"
+                        app:favItems="@{viewmodel.favItems}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                />
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/noFavMovies"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:orientation="vertical"
+                    android:visibility="@{viewmodel.empty ? View.VISIBLE : View.GONE}">
+
+                <TextView
+                        android:id="@+id/noFavMovies_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:gravity="center_vertical"
+                        android:text="@string/no_search_movies"
+                        android:layout_marginLeft="@dimen/tab_padding_bottom"
+                        android:layout_marginRight="@dimen/tab_padding_bottom"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>
