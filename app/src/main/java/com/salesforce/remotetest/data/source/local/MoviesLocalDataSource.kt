@@ -15,6 +15,7 @@ class MoviesLocalDataSource private constructor(
         callback: MoviesDataSource.LoadMoviesCallback
     ) {
         appExecutors.diskIO.execute {
+            Log.v("MoviesLocalDataSource", "Get Movies: $searchMovies")
             val movies = moviesDao.getMovies(searchMovies)
             appExecutors.mainThread.execute {
                 if (movies.isEmpty()) {

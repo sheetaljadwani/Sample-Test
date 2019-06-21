@@ -37,22 +37,18 @@ class MoviesRepository(
     ) {
         Log.v("SearchRepo", "cacheIsDirty $cacheIsDirty")
         EspressoIdlingResource.increment()
-        if(!cacheIsDirty) {
-            getMoviesFromRemoteDataSource(searchMovies, callback)
-        } else {
-            val searchQuery = "%{$searchMovies}%"
-            moviesLocalDataSource.getMovies(searchQuery, object : MoviesDataSource.LoadMoviesCallback {
-                override fun onMoviesLoaded(movies: List<Movie>) {
-                    refreshCache(movies)
-                    EspressoIdlingResource.decrement()
-                    callback.onMoviesLoaded(ArrayList(movies))
-                }
+        val searchQuery = "%$searchMovies%"
+        moviesLocalDataSource.getMovies(searchQuery, object : MoviesDataSource.LoadMoviesCallback {
+            override fun onMoviesLoaded(movies: List<Movie>) {
+                refreshCache(movies)
+                EspressoIdlingResource.decrement()
+                callback.onMoviesLoaded(ArrayList(movies))
+            }
 
-                override fun onDataNotAvailable() {
-                    getMoviesFromRemoteDataSource(searchMovies, callback)
-                }
-            })
-        }
+            override fun onDataNotAvailable() {
+                getMoviesFromRemoteDataSource(searchMovies, callback)
+            }
+        })
     }
 
     override fun setMovieAsFavorite(
