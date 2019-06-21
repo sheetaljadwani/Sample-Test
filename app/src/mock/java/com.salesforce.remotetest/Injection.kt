@@ -13,9 +13,9 @@ import com.salesforce.remotetest.util.AppExecutors
  */
 object Injection {
 
-    fun provideMoviesRepository(context: Context): MoviesRepository {
-        val database = MoviesDatabase.getInstance(context)
-        return MoviesRepository.getInstance(FakeMoviesRemoteDataSource,
-                MoviesLocalDataSource.getInstance(AppExecutors(), database.movieDao()))
-    }
+//    fun provideMoviesRepository(context: Context): MoviesRepository {
+//        val database = MoviesDatabase.getInstance(context)
+//        return MoviesRepository.getInstance(FakeMoviesRemoteDataSource,
+//                MoviesLocalDataSource.getInstance(AppExecutors(), database.movieDao()))
+//    }
 }

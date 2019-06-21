@@ -48,7 +48,7 @@
                            android:layout_marginRight="@dimen/tab_padding_bottom"
                            android:layout_marginTop="@dimen/activity_vertical_margin"
                            android:layout_marginBottom="@dimen/activity_vertical_margin"
-                           android:onClick="@{() -> viewmodel.getMovies(editTextSearch.getText().toString(), true)}"/>
+                           android:onClick="@{() -> viewmodel.getMovies(editTextSearch.getText().toString(), false)}"/>
             </LinearLayout>
 
 

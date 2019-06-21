@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
+import com.salesforce.remotetest.base.BaseApplication
 
 /**
  * The `fragment` is added to the container view with id `frameId`. The operation is
@@ -41,7 +42,7 @@ fun AppCompatActivity.setupActionBar(@IdRes toolbarId: Int, action: ActionBar.()
 }
 
 fun <T : ViewModel> AppCompatActivity.obtainViewModel(viewModelClass: Class<T>) =
-        ViewModelProviders.of(this, ViewModelFactory.getInstance(application)).get(viewModelClass)
+        ViewModelProviders.of(this, ViewModelFactory.getInstance(application as BaseApplication)).get(viewModelClass)
 
 /**
  * Runs a FragmentTransaction, then calls commit().

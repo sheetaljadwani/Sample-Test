@@ -7,8 +7,9 @@ import com.salesforce.remotetest.data.source.MoviesDataSource
 import com.salesforce.remotetest.util.AppExecutors
 
 class MoviesLocalDataSource private constructor(
-    val appExecutors: AppExecutors,
-    val moviesDao: MovieDao) : MoviesDataSource {
+    val moviesDao: MovieDao,
+    val appExecutors: AppExecutors
+    ) : MoviesDataSource {
     override fun getMovies(
         searchMovies: String,
         callback: MoviesDataSource.LoadMoviesCallback
@@ -132,11 +133,11 @@ class MoviesLocalDataSource private constructor(
     }
 
     override fun deleteLocalMovie(
-        movieTitle: String,
+        movieId: String,
         callback: MoviesDataSource.DeleteMovieCallback
     ) {
         appExecutors.diskIO.execute {
-            val result = moviesDao.deleteMovieById(movieTitle)
+            val result = moviesDao.deleteMovieById(movieId)
             appExecutors.mainThread.execute {
                 if (result != null) {
                     callback.onMovieDeleted()
@@ -151,10 +152,11 @@ class MoviesLocalDataSource private constructor(
         private var INSTANCE:  MoviesLocalDataSource? = null
 
         @JvmStatic
-        fun getInstance(appExecutors: AppExecutors, moviesDao: MovieDao): MoviesLocalDataSource {
+        fun getInstance(moviesDao: MovieDao,
+                        appExecutors: AppExecutors): MoviesLocalDataSource {
             if (INSTANCE == null) {
                 synchronized(MoviesLocalDataSource::javaClass) {
-                    INSTANCE =  MoviesLocalDataSource(appExecutors, moviesDao)
+                    INSTANCE =  MoviesLocalDataSource(moviesDao, appExecutors)
                 }
             }
             return INSTANCE!!

@@ -2,8 +2,13 @@ package com.salesforce.remotetest.data.source
 
 import android.util.Log
 import com.salesforce.remotetest.data.Movie
+import com.salesforce.remotetest.di.OBSERVER_ON
+import com.salesforce.remotetest.di.SUBCRIBER_ON
 import com.salesforce.remotetest.util.EspressoIdlingResource
+import io.reactivex.Scheduler
 import java.util.*
+import javax.inject.Inject
+import javax.inject.Named
 
 class MoviesRepository(
         val moviesRemoteDataSource: MoviesDataSource,
@@ -62,7 +67,7 @@ class MoviesRepository(
         movie: Movie,
         callback: MoviesDataSource.GetMovieCallback
     ) {
-        movie.favorite = 1
+        movie.favorite = 0
         moviesLocalDataSource.setMovieAsFavorite(movie, callback)
     }
 
@@ -125,27 +130,19 @@ class MoviesRepository(
     }
 
     private fun refreshLocalDataSource(movies: List<Movie>, callback: MoviesDataSource.LoadMoviesCallback) {
-        moviesLocalDataSource.deleteAllLocalMovies( object : MoviesDataSource.ClearMovieCallback{
-            override fun onMoviesCleared() {
-                for (movie in movies) {
-                    moviesLocalDataSource.saveMovieLocally(movie, object : MoviesDataSource.GetMovieCallback{
-                        override fun onMovieLoaded(movie: Movie) {
-
-                        }
-
-                        override fun onDataNotAvailable() {
-                            callback.onDataNotAvailable()
-                        }
-                    })
-                    cacheIsDirty = true
+        for (movie in movies) {
+            moviesLocalDataSource.saveMovieLocally(movie, object : MoviesDataSource.GetMovieCallback {
+                override fun onMovieLoaded(movie: Movie) {
                 }
-                callback.onMoviesLoaded(movies)
-            }
 
-            override fun onDataNotAvailable() {
-                callback.onDataNotAvailable()
-            }
-        })
+                override fun onDataNotAvailable() {
+                    callback.onDataNotAvailable()
+                }
+            })
+            cacheIsDirty = true
+        }
+        callback.onMoviesLoaded(movies)
+
     }
 
     override fun deleteAllLocalMovies(callback: MoviesDataSource.ClearMovieCallback) {
@@ -199,7 +196,7 @@ class MoviesRepository(
          * @return the [MoviesRepository] instance
          */
         @JvmStatic fun getInstance(moviesRemoteDataSource: MoviesDataSource,
-                moviesLocalDataSource: MoviesDataSource) =
+                                   moviesLocalDataSource: MoviesDataSource) =
                 INSTANCE ?: synchronized(MoviesRepository::class.java) {
                     INSTANCE ?: MoviesRepository(moviesRemoteDataSource, moviesLocalDataSource)
                             .also { INSTANCE = it }

@@ -12,10 +12,10 @@ import com.salesforce.remotetest.util.AppExecutors
  * [Movie] at compile time.
  */
 object Injection {
-    fun provideMoviesRepository(context: Context): MoviesRepository {
-        val database = MoviesDatabase.getInstance(context)
-        return MoviesRepository.getInstance(
-            MoviesRemoteDataSource.getInstance(),
-            MoviesLocalDataSource.getInstance(AppExecutors(), database.movieDao()))
-    }
+//    fun provideMoviesRepository(context: Context): MoviesRepository {
+//        val database = MoviesDatabase.getInstance(context)
+//        return MoviesRepository.getInstance(
+//            MoviesRemoteDataSource.getInstance(omDbApiService),
+//            MoviesLocalDataSource.getInstance(AppExecutors(), database.movieDao()))
+//    }
 }

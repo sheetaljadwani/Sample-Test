@@ -5,12 +5,13 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.salesforce.remotetest.base.BaseApplication
 import com.salesforce.remotetest.data.source.MoviesRepository
 import com.salesforce.remotetest.favorites.FavoriteMoviesViewModel
 import com.salesforce.remotetest.searchmoviestask.SearchMoviesViewModel
+import javax.inject.Inject
 
-class ViewModelFactory private constructor(
-        private val moviesRepository: MoviesRepository
+class ViewModelFactory (private val moviesRepository: MoviesRepository
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>) =
@@ -30,10 +31,9 @@ class ViewModelFactory private constructor(
         @SuppressLint("StaticFieldLeak")
         @Volatile private var INSTANCE: ViewModelFactory? = null
 
-        fun getInstance(application: Application) =
+        fun getInstance(application: BaseApplication) =
                 INSTANCE ?: synchronized(ViewModelFactory::class.java) {
-                    INSTANCE ?: ViewModelFactory(
-                            Injection.provideMoviesRepository(application.applicationContext))
+                    INSTANCE ?: ViewModelFactory(application.moviesRepository)
                             .also { INSTANCE = it }
                 }
 
@@ -41,5 +41,6 @@ class ViewModelFactory private constructor(
         @VisibleForTesting fun destroyInstance() {
             INSTANCE = null
         }
+
     }
 }

@@ -7,26 +7,31 @@ import com.salesforce.remotetest.api.OMDbApiService
 import com.salesforce.remotetest.data.Movie
 import com.salesforce.remotetest.data.Response
 import com.salesforce.remotetest.data.source.MoviesDataSource
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.salesforce.remotetest.di.OBSERVER_ON
+import com.salesforce.remotetest.di.SUBCRIBER_ON
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
+import javax.inject.Named
 
-class MoviesRemoteDataSource:  MoviesDataSource {
+class MoviesRemoteDataSource(private val omDbApiService: OMDbApiService,
+                             private val subscriberOn: Scheduler,
+                             private val observerOn: Scheduler
+) :  MoviesDataSource {
 
-    private val omDbApiService by lazy {
-        val omDbApiService: OMDbApiService = OMDbApiService.create()
-        omDbApiService
-    }
+//    private val omDbApiService by lazy {
+//        val omDbApiService: OMDbApiService = OMDbApiService.create()
+//        omDbApiService
+//    }
 
     lateinit var disposable: Disposable
 
     @SuppressLint("CheckResult")
-    override fun getMovies(searchMovie: String, callback: MoviesDataSource.LoadMoviesCallback) {
+    override fun getMovies(searchMovies: String, callback: MoviesDataSource.LoadMoviesCallback) {
         var movies = listOf<Movie>()
-        disposable = omDbApiService.getMovies(searchMovie)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        disposable = omDbApiService.getMovies(searchMovies)
+            .subscribeOn(subscriberOn)
+            .observeOn(observerOn)
             .subscribeWith(object: DisposableObserver<Response>() {
                 override fun onError(e: Throwable) {
                     callback.onDataNotAvailable()
@@ -46,8 +51,8 @@ class MoviesRemoteDataSource:  MoviesDataSource {
     override fun getMovie(movieTitle: String, callback: MoviesDataSource.GetMovieCallback) {
         var movie = Movie()
         disposable = omDbApiService.getMovie(movieTitle)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(subscriberOn)
+            .observeOn(observerOn)
             .doOnComplete { callback.onMovieLoaded(movie) }
             .subscribeWith(object: DisposableObserver<Movie>() {
                 override fun onError(e: Throwable) {
@@ -114,10 +119,12 @@ class MoviesRemoteDataSource:  MoviesDataSource {
         private var INSTANCE:  MoviesRemoteDataSource? = null
 
         @JvmStatic
-        fun getInstance(): MoviesRemoteDataSource {
+        fun getInstance(omDbApiService: OMDbApiService,
+                        @Named(SUBCRIBER_ON)subscribeOn: Scheduler,
+                        @Named(OBSERVER_ON)observeOn: Scheduler): MoviesRemoteDataSource {
             if (INSTANCE == null) {
                 synchronized(MoviesRemoteDataSource::javaClass) {
-                    INSTANCE =  MoviesRemoteDataSource()
+                    INSTANCE =  MoviesRemoteDataSource(omDbApiService, subscribeOn, observeOn)
                 }
             }
             return INSTANCE!!
